@@ -1,6 +1,5 @@
 
 <link rel="stylesheet" href="../css/styleshome.css">
-<!--<link rel="stylesheet" href="{{ asset('../css/styleshome.css') }}">!-->
 
 <form action="{{ route('consultar.clientes') }}" method="post">
     <h1>clientes</h1>
