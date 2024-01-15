@@ -1,5 +1,6 @@
 
 <link rel="stylesheet" href="../css/styleshome.css">
+<!--<link rel="stylesheet" href="{{ asset('../css/styleshome.css') }}">!-->
 
 <form action="{{ route('consultar.clientes') }}" method="post">
     <h1>clientes</h1>
@@ -17,3 +18,28 @@
     <input type="checkbox" name="opciones2[]" value="id_producto"> Consultar los ids de los productos de las ventas<br>
     <button type="submit">Consultar</button>
 </form>
+
+<div class="resizable">
+        <table>
+            <thead>
+                <tr>
+                    <th>Columna 1</th>
+                    <th>Columna 2</th>
+                    <th>Columna 3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Dato 1</td>
+                    <td>Dato 2</td>
+                    <td>Dato 3</td>
+                </tr>
+                <tr>
+                    <td>Dato 4</td>
+                    <td>Dato 5</td>
+                    <td>Dato 6</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="resizable-handle"></div>
+    </div>

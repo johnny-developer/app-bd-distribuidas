@@ -28,3 +28,34 @@ button {
     border-radius: 5px;
     cursor: pointer;
 }
+
+.resizable {
+    overflow: hidden;
+    position: relative;
+}
+
+.resizable table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.resizable th, .resizable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.resizable th {
+    background-color: #f2f2f2;
+}
+
+.resizable-handle {
+    position: absolute;
+    height: 100%;
+    width: 10px;
+    background: #ddd;
+    right: 0;
+    cursor: ew-resize;
+}
