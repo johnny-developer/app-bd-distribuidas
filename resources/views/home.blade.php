@@ -1,3 +1,6 @@
+
+<link rel="stylesheet" href="../css/styleshome.css">
+
 <form action="{{ route('consultar.clientes') }}" method="post">
     <h1>clientes</h1>
     @csrf
