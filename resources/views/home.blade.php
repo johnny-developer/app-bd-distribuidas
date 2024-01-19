@@ -3,8 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../resources/css/styles.css">
+    <!--<link rel="stylesheet" type="text/css" href="../resources/css/styles.css">-->
     <title>App-bd-distribuidas</title>
+    <style>
+        *{
+            margin: 5px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        form {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .resizable {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .resizable table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .resizable th, .resizable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .resizable th {
+            background-color: #f2f2f2;
+        }
+
+        .resizable-handle {
+            position: absolute;
+            height: 100%;
+            width: 10px;
+            background: #ddd;
+            right: 0;
+            cursor: ew-resize;
+        }
+    </style>
 </head>
 <body>
         
@@ -28,6 +91,29 @@
         <input type="checkbox" name="opciones2[]" value="id_producto"> Consultar los ids de los productos de las ventas<br>
         <button type="submit">Consultar</button>
     </form>
+
+    
+    <h2>Consulta personalizada:</h2>
+    @if($resultados_postgres && count($resultados_postgres) > 0)
+        <table>
+            <thead>
+                @foreach(array_keys((array) $resultados_postgres[0]) as $columna)
+                    <th>{{ $columna }}</th>
+                @endforeach
+            </thead>
+            <tbody>
+                @foreach($resultados_postgres as $resultado)
+                    <tr>
+                        @foreach((array) $resultado as $valor)
+                            <td>{{ $valor }}</td>
+                        @endforeach
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @else
+        <p>😎👌</p>
+    @endif
 </body>
 </html>
 
