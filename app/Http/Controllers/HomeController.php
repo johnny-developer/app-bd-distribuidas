@@ -14,7 +14,8 @@ class HomeController extends Controller
 {
     public function __invoke() {
         $resultados_postgres = [];
-        return view('home')->with('resultados_postgres', $resultados_postgres);
+        $resultados_mysql = [];
+        return view('home')->with('resultados_postgres', $resultados_postgres)->with('resultados_mysql', $resultados_mysql);
     }
     
     public function realizarConexionPostgres($datos){
@@ -32,19 +33,22 @@ class HomeController extends Controller
     }
 
 
-    private function realizarConexionMySQL($datos){
-    config(['database.connections.mysql' => [
-        'driver' => 'mysql',
-        'host' => $datos['clientes_mysql']->host,
-        'port' => $datos['clientes_mysql']->puerto, // Agrega el puerto si es necesario
-        'database' => $datos['clientes_mysql']->base_datos,
-        'username' => $datos['clientes_mysql']->usuario,
-        'password' => $datos['clientes_mysql']->password,
-        'charset' => 'utf8mb4',
-        'collation' => 'utf8mb4_unicode_ci',
-        'prefix' => '',
-        'strict' => true,
-        ]]);
+    private function realizarConexionMySQL($datos)
+    {
+        $config = [
+            'driver' => 'mysql',
+            'host' => $datos['conexiones_mysql']->ip,
+            'port' => $datos['conexiones_mysql']->puerto, // Agrega el puerto si es necesario
+            'database' => $datos['conexiones_mysql']->bd,
+            'username' => $datos['conexiones_mysql']->usuario,
+            'password' => $datos['conexiones_mysql']->contraseña,
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+        ];
+        DB::purge('mysql');
+        config(['database.connections.mysql' => $config]);
         return DB::connection('mysql');
     }
 
@@ -55,20 +59,19 @@ class HomeController extends Controller
         $clientes_postgres = Clientes::where('sitio', '1')->firstOrFail();
         $ventas_postgres = Ventas::where('sitio', '1')->firstOrFail();
         
-        /*
         $conexiones_mysql = Conexiones::where('sitio', '2')->firstOrFail();
         $clientes_mysql = Clientes::where('sitio', '2')->firstOrFail();
         $ventas_mysql = Ventas::where('sitio', '2')->firstOrFail();
-        */
+        
         return [
             'conexiones_postgres' => $conexiones_postgres,
             'clientes_postgres' => $clientes_postgres,
             'ventas_postgres' => $ventas_postgres,
-            /*
+            
             'conexiones_mysql' => $conexiones_mysql,
             'clientes_mysql' => $clientes_mysql,
             'ventas_mysql' => $ventas_mysql,
-            */
+            
         ];
     }
 
@@ -83,29 +86,29 @@ class HomeController extends Controller
         foreach ($opciones as $op) {
             if ($op == 'ids') {
                 $consulta_postgres .= ($consulta_postgres === "") ? $datos['clientes_postgres']->ids : ',' . $datos['clientes_postgres']->ids;
-                //$consulta_mysql .= ($consulta_mysql === "") ? $datos['clientes_mysql']->ids : ',' . $datos['clientes_mysql']->ids;
+                $consulta_mysql .= ($consulta_mysql === "") ? $datos['clientes_mysql']->ids : ',' . $datos['clientes_mysql']->ids;
             }
             if ($op == 'nombre') {
                 $consulta_postgres .= ($consulta_postgres === "") ? $datos['clientes_postgres']->nombre : ',' . $datos['clientes_postgres']->nombre;
-                //$consulta_mysql .= ($consulta_mysql === "") ? $datos['clientes_mysql']->nombre : ',' . $datos['clientes_mysql']->nombre;
+                $consulta_mysql .= ($consulta_mysql === "") ? $datos['clientes_mysql']->nombre : ',' . $datos['clientes_mysql']->nombre;
             }
             if ($op == 'numero') {
                 $consulta_postgres .= ($consulta_postgres === "") ? $datos['clientes_postgres']->numero : ',' . $datos['clientes_postgres']->numero;
-                //$consulta_mysql .= ($consulta_mysql === "") ? $datos['clientes_mysql']->numero : ',' . $datos['clientes_mysql']->numero;
+                $consulta_mysql .= ($consulta_mysql === "") ? $datos['clientes_mysql']->numero : ',' . $datos['clientes_mysql']->numero;
             }
         }
         $sitio_conexion = $this->realizarConexionPostgres($datos);
-        //$sitio_conexion_mysql = $this->realizarConexionMySQL($datos);
+        $sitio_conexion_mysql = $this->realizarConexionMySQL($datos);
 
         $tabla_postgres = $datos['clientes_postgres']->tabla;
-        //$tabla_mysql = $datos['clientes_mysql']->tabla;
+        $tabla_mysql = $datos['clientes_mysql']->tabla;
 
         $resultados_postgres = $sitio_conexion->select("SELECT $consulta_postgres FROM $tabla_postgres");
-        //$resultados_mysql = $sitio_conexion_mysql->select("SELECT $consulta_mysql FROM $tabla_mysql");
+        $resultados_mysql = $sitio_conexion_mysql->select("SELECT $consulta_mysql FROM $tabla_mysql");
         
         //return $resultados_postgres;
         //return $resultados_mysql;
-        return view('home')->with('resultados_postgres', $resultados_postgres);
+        return view('home')->with('resultados_postgres', $resultados_postgres)->with('resultados_mysql', $resultados_mysql);
     }
 
     
@@ -119,34 +122,33 @@ class HomeController extends Controller
         foreach ($opciones as $op) {
             if ($op == 'ids') {
                 $consulta_postgres .= ($consulta_postgres === "") ? $datos['ventas_postgres']->ids : ',' . $datos['ventas_postgres']->ids;
-                //$consulta_mysql .= ($consulta_mysql === "") ? $datos['ventas_mysql']->ids : ',' . $datos['ventas_mysql']->ids;
+                $consulta_mysql .= ($consulta_mysql === "") ? $datos['ventas_mysql']->ids : ',' . $datos['ventas_mysql']->ids;
             }
             if ($op == 'fecha') {
                 $consulta_postgres .= ($consulta_postgres === "") ? $datos['ventas_postgres']->fecha : ',' . $datos['ventas_postgres']->fecha;
-                //$consulta_mysql .= ($consulta_mysql === "") ? $datos['ventas_mysql']->fecha : ',' . $datos['ventas_mysql']->fecha;
+                $consulta_mysql .= ($consulta_mysql === "") ? $datos['ventas_mysql']->fecha : ',' . $datos['ventas_mysql']->fecha;
             }
             if ($op == 'id_cliente') {
                 $consulta_postgres .= ($consulta_postgres === "") ? $datos['ventas_postgres']->id_cliente : ',' . $datos['ventas_postgres']->id_cliente;
-                //$consulta_mysql .= ($consulta_mysql === "") ? $datos['ventas_mysql']->id_cliente : ',' . $datos['ventas_mysql']->id_cliente;
+                $consulta_mysql .= ($consulta_mysql === "") ? $datos['ventas_mysql']->id_cliente : ',' . $datos['ventas_mysql']->id_cliente;
             }
             if ($op == 'id_producto') {
                 $consulta_postgres .= ($consulta_postgres === "") ? $datos['ventas_postgres']->id_producto : ',' . $datos['ventas_postgres']->id_producto;
-                //$consulta_mysql .= ($consulta_mysql === "") ? $datos['ventas_mysql']->id_producto : ',' . $datos['ventas_mysql']->id_producto;
+                $consulta_mysql .= ($consulta_mysql === "") ? $datos['ventas_mysql']->id_producto : ',' . $datos['ventas_mysql']->id_producto;
             }
         }
         $sitio_conexion = $this->realizarConexionPostgres($datos);
-        //$sitio_conexion_mysql = $this->realizarConexionMySQL($datos);
+        $sitio_conexion_mysql = $this->realizarConexionMySQL($datos);
 
         $tabla_postgres = $datos['ventas_postgres']->tabla;
-        //$tabla_mysql = $datos['ventas_mysql']->tabla;
+        $tabla_mysql = $datos['ventas_mysql']->tabla;
 
         $resultados_postgres = $sitio_conexion->select("SELECT $consulta_postgres FROM $tabla_postgres");
-        //$resultados_mysql = $sitio_conexion_mysql->select("SELECT $consulta_mysql FROM $tabla_mysql");
+        $resultados_mysql = $sitio_conexion_mysql->select("SELECT $consulta_mysql FROM $tabla_mysql");
 
-        return view('home')->with('resultados_postgres', $resultados_postgres);
+        return view('home')->with('resultados_postgres', $resultados_postgres)->with('resultados_mysql', $resultados_mysql);
         //return $resultados_mysql;
     }
     
-
     
 }
